@@ -85,13 +85,14 @@ func (a *App) register(pluginName string, r Route) {
 	}
 
 	for code, body := range r.Responses {
-		schema := a.registry.Register(body)
-		op.Responses[itoa(code)] = Response{
-			Description: http.StatusText(code),
-			Content: map[string]MediaType{
+		resp := Response{Description: http.StatusText(code)}
+		if body != nil {
+			schema := a.registry.Register(body)
+			resp.Content = map[string]MediaType{
 				"application/json": {Schema: schema},
-			},
+			}
 		}
+		op.Responses[itoa(code)] = resp
 	}
 
 	if len(op.Responses) == 0 {

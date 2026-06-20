@@ -18,6 +18,9 @@ func (r *SchemaRegistry) Schemas() map[string]Schema {
 }
 
 func (r *SchemaRegistry) Register(v any) Schema {
+	if v == nil {
+		return Schema{}
+	}
 	t := reflect.TypeOf(v)
 	for t.Kind() == reflect.Ptr {
 		t = t.Elem()
