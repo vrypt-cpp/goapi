@@ -28,6 +28,7 @@ type App struct {
 	registry *SchemaRegistry
 	spec     *OpenAPI
 	prefix   string
+	cors     *CORSConfig
 }
 
 func NewApp(title, version, prefix string) *App {
@@ -118,7 +119,14 @@ func (a *App) ServeOpenAPI(path string) {
 	})
 }
 
+func (a *App) EnableCORS(cfg CORSConfig) {
+	a.cors = &cfg
+}
+
 func (a *App) Handler() http.Handler {
+	if a.cors != nil {
+		return corsMiddleware(*a.cors, a.mux)
+	}
 	return a.mux
 }
 
